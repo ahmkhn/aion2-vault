@@ -1,7 +1,7 @@
 # AION 2 Vault
 
 See what your inventory, character storage and server storage are worth on the market, sorted by value.
-
+<img width="2076" height="983" alt="image" src="https://github.com/user-attachments/assets/497c1622-d9c1-4ea3-92d5-3bb275ff7ef6" />
 **[⬇ Download the latest release](https://github.com/ahmkhn/aion2-vault/releases/latest)**
 
 ## Install
