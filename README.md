@@ -1,7 +1,6 @@
 # AION 2 Vault
 
 See what your inventory, character storage and server storage are worth on the market, sorted by value.
-<img width="2076" height="983" alt="image" src="https://github.com/user-attachments/assets/497c1622-d9c1-4ea3-92d5-3bb275ff7ef6" />
 
 **[⬇ Download the latest release](https://github.com/ahmkhn/aion2-vault/releases/latest)**
 
@@ -17,6 +16,7 @@ See what your inventory, character storage and server storage are worth on the m
 2. Pick your **server and faction** at the top right.
 3. Your items appear automatically. Open each storage in game once if it shows empty.
 4. Hover over any item to see how its price was worked out.
+5. Closing the window (X) keeps it running in the **system tray**, so it keeps tracking. Click the tray icon to reopen it, or right-click → **Quit** to exit.
 
 **Price modes:**
 - **Fair price** (default): the lowest of the current listing, the 7-day median and the 24h average sale price. If that's more than 2.5× the median on other servers in your region, the region median is used instead.
