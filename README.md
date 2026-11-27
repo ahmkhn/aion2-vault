@@ -42,5 +42,6 @@ Set **Market fee %** to see what you'd actually receive after the market fee.
 | Npcap is set to administrators only | Press **Restart as administrator**, or reinstall Npcap with that option unticked |
 | Connected mid-session | Relog, or switch character |
 | Game not running | Start AION 2. The app looks for `AION2.exe` |
+| Error about `Python.Runtime` on start (v0.0.1 only) | Update to the latest release. Or, before unzipping, right-click the zip → Properties → **Unblock** |
 
 The log is in `%APPDATA%\AION2Vault\vault.log`. Deleting that folder resets the app.
