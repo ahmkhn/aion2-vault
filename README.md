@@ -1,7 +1,7 @@
 # AION 2 Vault
 
 See what your inventory, character storage and server storage are worth on the market, sorted by value.
-<img width="2076" height="983" alt="image" src="https://github.com/user-attachments/assets/497c1622-d9c1-4ea3-92d5-3bb275ff7ef6" />
+
 **[⬇ Download the latest release](https://github.com/ahmkhn/aion2-vault/releases/latest)**
 
 ## Install
@@ -42,6 +42,7 @@ Set **Market fee %** to see what you'd actually receive after the market fee.
 | Npcap is set to administrators only | Press **Restart as administrator**, or reinstall Npcap with that option unticked |
 | Connected mid-session | Relog, or switch character |
 | Game not running | Start AION 2. The app looks for `AION2.exe` |
+| Prices won't load, `CERTIFICATE_VERIFY_FAILED` | Update to v0.0.3 or newer. If it persists, check your PC's date and time, and any antivirus HTTPS scanning |
 | Error about `Python.Runtime` on start (v0.0.1 only) | Update to the latest release. Or, before unzipping, right-click the zip → Properties → **Unblock** |
 
 The log is in `%APPDATA%\AION2Vault\vault.log`. Deleting that folder resets the app.
