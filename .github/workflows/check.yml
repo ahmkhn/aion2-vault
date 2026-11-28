@@ -1,0 +1,38 @@
+# Every push to main and every pull request: run the decoder test and build the exe.
+# Nothing is released here. The zip is attached to the run for testing (kept 14 days).
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements-build.txt
+
+      - name: Test and build
+        shell: pwsh
+        # item names and icons come from the committed web/ folder; CI never crawls
+        # aion2.exchange or NCSOFT for them
+        run: .\build.ps1 -SkipItemDb
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AION2Vault-${{ github.sha }}
+          path: |
+            release/*.zip
+            release/*.sha256
+          retention-days: 14

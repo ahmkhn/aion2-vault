@@ -1,0 +1,21 @@
+# your own data when running from source: settings, price caches, logs and
+# diagnostics captures (which contain your character's items) - never commit
+data/
+
+# build output
+release/*.zip
+release/*.sha256
+build/
+dist/
+*.spec
+web/icon.ico
+
+# item database build cache (rebuilt by tools/build_itemdb.py)
+tools/.itemdb_cache.json
+tools/.itemdb_cache.json.tmp
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/

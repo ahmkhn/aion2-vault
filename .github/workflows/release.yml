@@ -1,0 +1,47 @@
+# Publishes a GitHub release, only when you push a version tag:
+#
+#   1. set VERSION in prices.py (e.g. "0.0.4")
+#   2. write release/notes-v0.0.4.md
+#   3. commit, then:  git tag v0.0.4  &&  git push origin v0.0.4
+#
+# The tag must match VERSION, and the notes file must exist, or nothing is published.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the tag matches VERSION and notes exist
+        shell: pwsh
+        run: |
+          $v = (Select-String -Path prices.py -Pattern '^VERSION = "(.+)"').Matches[0].Groups[1].Value
+          if ("v$v" -ne $env:GITHUB_REF_NAME) { throw "Tag $env:GITHUB_REF_NAME doesn't match VERSION = `"$v`" in prices.py" }
+          if (-not (Test-Path "release/notes-v$v.md")) { throw "release/notes-v$v.md is missing" }
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements-build.txt
+
+      - name: Test and build
+        shell: pwsh
+        run: .\build.ps1 -SkipItemDb
+
+      - name: Publish the release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          gh release create $tag "release/AION2Vault-$tag-win64.zip" "release/AION2Vault-$tag-win64.zip.sha256" `
+            --title "AION 2 Vault $tag" --notes-file "release/notes-$tag.md" --verify-tag
