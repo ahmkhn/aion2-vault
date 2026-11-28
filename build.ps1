@@ -33,6 +33,7 @@ if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed" }
 $readme = (Get-Content README.md -Raw -Encoding UTF8) -replace "`r`n", "`n"   # git may check out CRLF
 $cut = $readme.IndexOf("`n---`n")
 if ($cut -gt 0) { $readme = $readme.Substring(0, $cut).TrimEnd() + "`n" }
+$readme = $readme -replace "(?m)^!\[[^\]]*\]\(docs/[^)]*\)\n\n?", ""   # screenshots aren't in the zip
 [IO.File]::WriteAllText("$work\dist\AION2Vault\README.md", $readme, (New-Object Text.UTF8Encoding $false))
 python tools\collect_licenses.py "$work\dist\AION2Vault\THIRD-PARTY-NOTICES.txt"
 if ($LASTEXITCODE -ne 0) { throw "license collection failed" }

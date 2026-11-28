@@ -4,6 +4,8 @@ See what your inventory, character storage and server storage are worth on the m
 
 **[⬇ Download the latest release](https://github.com/ahmkhn/aion2-vault/releases/latest)**
 
+![AION 2 Vault showing items from the inventory, character storage and server storage, sorted by total value](docs/screenshot.png)
+
 ## Install
 
 1. Install **[Npcap](https://npcap.com/#download)**, the same capture driver DPS meters use. Keep the default options, and leave *"Restrict Npcap driver's access to Administrators only"* unticked.

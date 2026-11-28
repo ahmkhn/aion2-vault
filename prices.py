@@ -16,7 +16,7 @@ log = logging.getLogger("prices")
 
 EXCHANGE = "https://aion2.exchange/api"
 GAMECONST = "https://tw.ncsoft.com/aion2/api/gameconst/item"
-VERSION = "0.0.3"
+VERSION = "0.0.4"
 PROJECT_URL = "https://github.com/ahmkhn/aion2-vault"   # lets the exchange's owner see where traffic comes from
 UA = f"aion2-vault/{VERSION} (personal storage valuation{'; +' + PROJECT_URL if PROJECT_URL else ''})"
 
