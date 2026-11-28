@@ -19,6 +19,8 @@ GAMECONST = "https://tw.ncsoft.com/aion2/api/gameconst/item"
 VERSION = "0.0.4"
 PROJECT_URL = "https://github.com/ahmkhn/aion2-vault"   # lets the exchange's owner see where traffic comes from
 UA = f"aion2-vault/{VERSION} (personal storage valuation{'; +' + PROJECT_URL if PROJECT_URL else ''})"
+# newest published release (drafts and pre-releases are skipped); the release workflow keeps it current
+RELEASES_API = "https://api.github.com/repos/ahmkhn/aion2-vault/releases/latest"
 
 # Polite defaults for a tool many people run at once. aion2.exchange is a small
 # community site that updates hourly, so polling faster than that gains nothing.
@@ -99,6 +101,20 @@ class _Http:
                     time.sleep(2 ** (attempt + 1))
                     continue
                 raise
+
+
+def version_tuple(v: str) -> tuple[int, ...]:
+    """"v0.0.10" -> (0, 0, 10), so versions compare as numbers rather than text."""
+    return tuple(int(x) for x in v.lstrip("vV").split("."))
+
+
+def latest_release(http: _Http) -> dict:
+    """{"version", "url"} of the newest release on GitHub. Only the request itself is sent."""
+    tag = str(http.get(RELEASES_API, retries=1).get("tag_name") or "")
+    version = tag.lstrip("vV")
+    version_tuple(version)   # raises ValueError on an unexpected tag
+    # the link is built here rather than taken from the response
+    return {"version": version, "url": f"{PROJECT_URL}/releases/tag/v{version}"}
 
 
 def _load(path, default):

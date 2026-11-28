@@ -37,6 +37,7 @@ Set **Market fee %** to see what you'd actually receive after the market fee.
 - **Outside services:**
   - Prices come from the public [aion2.exchange](https://aion2.exchange) API, fetched gently and cached. Your item IDs are mixed with random items, so a request doesn't reveal exactly what you own.
   - Item names and icons ship inside the app, so it doesn't contact NCSOFT for them. Only items newer than the release are looked up online.
+  - About twice a day it asks GitHub for the latest release number, and shows a banner when a newer version is out. Nothing about you or your items is sent. Untick **check for updates** at the bottom right to turn it off.
 - **Unofficial:** this is a third-party fan tool, not affiliated with NCSOFT. AION, item names and icons are © NCSOFT. Use it at your own risk.
 
 ## Troubleshooting
@@ -81,7 +82,7 @@ When running from source, everything is kept in `data\`, which git ignores.
   2. Write `release/notes-v0.0.4.md`.
   3. Commit, then `git tag v0.0.4` and `git push origin v0.0.4`.
 
-  The release workflow checks that the tag matches `VERSION`, builds the exe, and publishes the zip and its `.sha256` with your notes.
+  The release workflow checks that the tag matches `VERSION`, builds the exe, and publishes the zip and its `.sha256` with your notes. Installed copies (v0.0.4+) see it as an update within 12 hours.
 - **Building locally:** `.\build.ps1` writes `release\AION2Vault-v<version>-win64.zip`. Add `-SkipItemDb` to use the committed item data, which is what CI does.
 - **Item database** (`web/itemdb.json`, `web/icons/`):
   - `python tools\build_itemdb.py` adds names and 64 px icons for new market items from NCSOFT. Items NCSOFT doesn't list get their icon from aion2.exchange.

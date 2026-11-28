@@ -22,7 +22,8 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import npcap
-from prices import CATALOG_TTL, VERSION, ItemInfo, PriceBook, _load, _save, friendly_error
+from prices import (CATALOG_TTL, VERSION, ItemInfo, PriceBook, _Http, _load, _save, friendly_error,
+                    latest_release, version_tuple)
 from protocol import CONTAINERS, COUNTED, HIDDEN, KINAH_KEY, Inventory
 
 FROZEN = getattr(sys, "frozen", False)
@@ -36,8 +37,11 @@ ICON_PATH = re.compile(r"^/icons/[0-9a-f]{16}\.webp$")   # bundled item icons
 log = logging.getLogger("app")
 
 DEFAULT_SETTINGS = {"server_id": None, "server_chosen": False, "fee_pct": 0.0,
-                    "price_mode": "fair", "include_equipped": False}
+                    "price_mode": "fair", "include_equipped": False,
+                    "check_updates": True, "dismissed_update": None}
 PRICE_MODES = ("fair", "lowest", "sold_avg")
+UPDATE_FIRST = 10            # seconds after start before the first update check
+UPDATE_EVERY = 12 * 60 * 60  # then twice a day while it runs in the tray
 OUTLIER_X = 2.5        # local price this many times the region median counts as an outlier
 MIN_SALES = 3          # 24h sales needed before the sold average is trusted
 MIN_REGION = 3         # other servers that must list an item for a region median
@@ -111,6 +115,9 @@ class Vault:
         self._dirty = False
         self._wake = threading.Event()
         self._last_refresh = 0.0
+        self.github = _Http(1.0)
+        self.update = None           # {"version", "url"} when a newer release is out
+        self._update_wake = threading.Event()
 
     # ------------------------------------------------------------- startup
     def start(self):
@@ -131,6 +138,27 @@ class Vault:
             self.capture.start()
         threading.Thread(target=self._background, name="refresh", daemon=True).start()
         threading.Thread(target=self._region_loop, name="region", daemon=True).start()
+        threading.Thread(target=self._update_loop, name="updates", daemon=True).start()
+
+    def check_update(self):
+        """Ask GitHub for the newest release; failures are logged and retried next time."""
+        try:
+            latest = latest_release(self.github)
+        except Exception as e:
+            log.info("update check failed: %s", friendly_error(e))
+            return
+        newer = version_tuple(latest["version"]) > version_tuple(VERSION)
+        if newer and (self.update or {}).get("version") != latest["version"]:
+            log.info("update available: %s (running %s)", latest["version"], VERSION)
+        self.update = latest if newer else None
+
+    def _update_loop(self):
+        self._update_wake.wait(UPDATE_FIRST)
+        while True:
+            self._update_wake.clear()
+            if self.settings["check_updates"]:
+                self.check_update()
+            self._update_wake.wait(UPDATE_EVERY)
 
     def _mark_dirty(self):
         self._dirty = True
@@ -282,7 +310,10 @@ class Vault:
             "region_progress": self.prices.region_progress,
             "refreshing": self.prices.loading is not None,
             "refresh_cooldown": self.refresh_cooldown(),
-            "api_requests": {"exchange": self.prices.http.count, "ncsoft": self.info.http.count},
+            "api_requests": {"exchange": self.prices.http.count, "ncsoft": self.info.http.count,
+                             "github": self.github.count},
+            "update": (self.update if self.update and s["check_updates"]
+                       and s.get("dismissed_update") != self.update["version"] else None),
             "activity": self._activity(info_pending),
             "npcap_url": npcap.NPCAP_URL,
             "version": VERSION,
@@ -323,6 +354,12 @@ class Vault:
             s["price_mode"] = patch["price_mode"]
         if "include_equipped" in patch:
             s["include_equipped"] = bool(patch["include_equipped"])
+        if "check_updates" in patch:
+            s["check_updates"] = bool(patch["check_updates"])
+            if s["check_updates"]:
+                self._update_wake.set()   # check now rather than in up to 12 hours
+        if isinstance(patch.get("dismissed_update"), str):
+            s["dismissed_update"] = patch["dismissed_update"][:20]
         _save(os.path.join(DATA, "settings.json"), s)
         self._wake.set()
 

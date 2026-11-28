@@ -7,6 +7,7 @@
 - **One row per item** on the All view, listing every storage it's in.
 - **Tradable Kinah** now adds up your inventory and server storage.
 - **More icons,** including Balaur's Essence and Sealed Kromede Wings.
+- **Update notices.** A banner tells you when a newer version is out. You can turn it off at the bottom right.
 - **`--diagnose`** for reporting problems.
 
 ## Install
