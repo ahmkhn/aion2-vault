@@ -17,4 +17,4 @@
 
 **Updating:** quit the old version (tray icon → Quit), then unzip this one. Your settings carry over.
 
-More details, troubleshooting and the source code are in the [README](https://github.com/ahmkhn/aion2-vault#readme). This release was built from the source by GitHub Actions; the SHA256 is in the `.sha256` file.
+More details, troubleshooting and the source code are in the [README](https://github.com/ahmkhe/aion2-vault#readme). This release was built from the source by GitHub Actions; the SHA256 is in the `.sha256` file.
