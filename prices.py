@@ -6,6 +6,7 @@ import logging
 import os
 import queue
 import random
+import re
 import threading
 import time
 import urllib.error
@@ -17,10 +18,13 @@ log = logging.getLogger("prices")
 EXCHANGE = "https://aion2.exchange/api"
 GAMECONST = "https://tw.ncsoft.com/aion2/api/gameconst/item"
 VERSION = "0.0.4"
-PROJECT_URL = "https://github.com/ahmkhn/aion2-vault"   # lets the exchange's owner see where traffic comes from
+PROJECT_URL = "https://github.com/ahmkhe/aion2-vault"   # lets the exchange's owner see where traffic comes from
 UA = f"aion2-vault/{VERSION} (personal storage valuation{'; +' + PROJECT_URL if PROJECT_URL else ''})"
-# newest published release (drafts and pre-releases are skipped); the release workflow keeps it current
-RELEASES_API = "https://api.github.com/repos/ahmkhn/aion2-vault/releases/latest"
+# newest published release (drafts and pre-releases are skipped); the release workflow keeps it current.
+# Addressed by the repository's permanent ID rather than owner/name: a name-based URL only redirects
+# after a rename until someone else registers the old name, and would then follow their releases.
+RELEASES_API = "https://api.github.com/repositories/1473803930/releases/latest"
+RELEASE_PAGE = re.compile(r"^https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/releases/tag/[A-Za-z0-9._-]+$")
 
 # Polite defaults for a tool many people run at once. aion2.exchange is a small
 # community site that updates hourly, so polling faster than that gains nothing.
@@ -110,11 +114,16 @@ def version_tuple(v: str) -> tuple[int, ...]:
 
 def latest_release(http: _Http) -> dict:
     """{"version", "url"} of the newest release on GitHub. Only the request itself is sent."""
-    tag = str(http.get(RELEASES_API, retries=1).get("tag_name") or "")
+    r = http.get(RELEASES_API, retries=1)
+    tag = str(r.get("tag_name") or "")
     version = tag.lstrip("vV")
     version_tuple(version)   # raises ValueError on an unexpected tag
-    # the link is built here rather than taken from the response
-    return {"version": version, "url": f"{PROJECT_URL}/releases/tag/v{version}"}
+    # GitHub's own link follows any later rename of the account; anything but a
+    # github.com release page falls back to the link built from PROJECT_URL
+    url = str(r.get("html_url") or "")
+    if not RELEASE_PAGE.match(url):
+        url = f"{PROJECT_URL}/releases/tag/v{version}"
+    return {"version": version, "url": url}
 
 
 def _load(path, default):

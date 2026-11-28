@@ -2,7 +2,7 @@
 
 See what your inventory, character storage and server storage are worth on the market, sorted by value.
 
-**[⬇ Download the latest release](https://github.com/ahmkhn/aion2-vault/releases/latest)**
+**[⬇ Download the latest release](https://github.com/ahmkhe/aion2-vault/releases/latest)**
 
 ![AION 2 Vault showing items from the inventory, character storage and server storage, sorted by total value](docs/screenshot.png)
 
@@ -58,7 +58,7 @@ The log is in `%APPDATA%\AION2Vault\vault.log`. Deleting that folder resets the 
 
 1. Close AION 2 Vault (tray icon → Quit).
 2. Start it with diagnostics on (v0.0.4 or newer). In PowerShell, from the folder you unzipped it to, run `.\AION2Vault.exe --diagnose`.
-3. Log in to your character, then open an [issue](https://github.com/ahmkhn/aion2-vault/issues) and attach `%APPDATA%\AION2Vault\vault.log`.
+3. Log in to your character, then open an [issue](https://github.com/ahmkhe/aion2-vault/issues) and attach `%APPDATA%\AION2Vault\vault.log`.
 
 The log has no account or character names. With `--diagnose`, a capture of your own inventory messages is also saved in `%APPDATA%\AION2Vault\diagnostics`. Only share it if you're asked to; it lists your items.
 
